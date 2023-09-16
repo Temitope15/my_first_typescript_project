@@ -1,47 +1,34 @@
-const form =  document.querySelector('.new-item-form') as HTMLFormElement;
-console.log(form.children)
+import { Payment } from './classes/payment.js';
+import { hasFormatter } from './interfaces/hasFormatter.js';
+import { Invoice } from './classes/invoice.js'
+import { listTemplate } from './classes/listTemplate.js';
+
+
+
+const form = document.querySelector('.new-item-form') as HTMLFormElement;
 
 const type = document.querySelector('#type') as HTMLSelectElement;
-
 const toFrom = document.querySelector('#toFrom') as HTMLInputElement;
 const details = document.querySelector('#details') as HTMLInputElement;
 const amount = document.querySelector('#amount') as HTMLInputElement;
 
-type.addEventListener('click', ()=>{
-    console.log(
-        type.value,
-        toFrom.value,
-        details.value,
-        amount.valueAsNumber
-    )
-})
 
-class Invoice {
-    client : string;
-    description : string;
-    amount : number;
+const ul = document.querySelector('ul')!;
 
-    constructor(c: string, d: string, a:number){
-        this.client = c;
-        this.description = d;
-        this.amount = a;
-    }
+const list = new listTemplate(ul)
+form.addEventListener('submit', (e : Event)=>{
+e.preventDefault();
 
-    format(){
-        return `${this.client} owes #${this.amount} for ${this.description}`
-    }
+let doc : hasFormatter;
+
+
+if(type.value == "invoice"){
+    doc = new Invoice(toFrom.value, details.value, amount.valueAsNumber);
+} else {
+    doc = new Payment(toFrom.value, details.value, amount.valueAsNumber);
 }
-
-const invOne = new Invoice("Temitope", "Website creation", 500);
-const invTwo = new Invoice("Ayodeji", "Website creation", 400);
-
-let invoices : Invoice [] = []
-
-invoices.push(invOne)
-invoices.push(invTwo)
-console.log(invoices)
-
-invoices.forEach(inv =>{
-    console.log(inv.client, inv.description, inv.amount, inv.format())
+  list.render(doc, type.value, "end");
 })
-console.log(invOne.format())
+
+
+

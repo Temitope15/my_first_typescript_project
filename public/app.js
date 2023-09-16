@@ -1,30 +1,21 @@
-"use strict";
+import { Payment } from './classes/payment.js';
+import { Invoice } from './classes/invoice.js';
+import { listTemplate } from './classes/listTemplate.js';
 const form = document.querySelector('.new-item-form');
-console.log(form.children);
 const type = document.querySelector('#type');
 const toFrom = document.querySelector('#toFrom');
 const details = document.querySelector('#details');
 const amount = document.querySelector('#amount');
-type.addEventListener('click', () => {
-    console.log(type.value, toFrom.value, details.value, amount.valueAsNumber);
-});
-class Invoice {
-    constructor(c, d, a) {
-        this.client = c;
-        this.description = d;
-        this.amount = a;
+const ul = document.querySelector('ul');
+const list = new listTemplate(ul);
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let doc;
+    if (type.value == "invoice") {
+        doc = new Invoice(toFrom.value, details.value, amount.valueAsNumber);
     }
-    format() {
-        return `${this.client} owes #${this.amount} for ${this.description}`;
+    else {
+        doc = new Payment(toFrom.value, details.value, amount.valueAsNumber);
     }
-}
-const invOne = new Invoice("Temitope", "Website creation", 500);
-const invTwo = new Invoice("Ayodeji", "Website creation", 400);
-let invoices = [];
-invoices.push(invOne);
-invoices.push(invTwo);
-console.log(invoices);
-invoices.forEach(inv => {
-    console.log(inv.client, inv.description, inv.amount, inv.format());
+    list.render(doc, type.value, "end");
 });
-console.log(invOne.format());
